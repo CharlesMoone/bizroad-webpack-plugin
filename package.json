@@ -1,0 +1,57 @@
+{
+  "name": "bizroad-webpack-plugin",
+  "version": "1.0.4",
+  "description": "webpack plugin for biz road",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "server": "nodemon --experimental-modules --experimental-json-modules ./server/app.mjs",
+    "clear": "rm -rf ./bizroad ./demo/dist ./dist",
+    "pretest": "npm run clear",
+    "beta": "npm run clear && npm run compile && npm pu --tag beta",
+    "prepack": "npm run clear && npm run compile",
+    "compile": "tsc && npm run assets",
+    "assets": "cp -r ./assets ./dist",
+    "test": "npm run compile && webpack --config ./demo/webpack.config.js"
+  },
+  "keywords": [
+    "biz",
+    "road",
+    "webpack",
+    "plugin"
+  ],
+  "author": "meng5994197@gmail.com",
+  "license": "MIT",
+  "repository": "git@github.com:CharlesMoone/BizroadWebpackPlugin.git",
+  "peerDependencies": {
+    "@babel/parser": "^7.13.16",
+    "@babel/traverse": "^7.13.17",
+    "webpack": "^5.35.1"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.13.16",
+    "@babel/traverse": "^7.13.17",
+    "webpack": "^5.35.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.16",
+    "@babel/preset-env": "^7.13.15",
+    "@babel/preset-typescript": "^7.13.0",
+    "@babel/preset-react": "^7.13.13",
+    "@types/babel__traverse": "^7.11.1",
+    "axios": "^0.21.1",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.2.4",
+    "nodemon": "^2.0.7",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "typescript": "^4.2.4",
+    "vue-loader": "^15.9.6",
+    "vue-template-compiler": "^2.6.12",
+    "webpack": "^5.35.1",
+    "webpack-cli": "^4.6.0"
+  }
+}

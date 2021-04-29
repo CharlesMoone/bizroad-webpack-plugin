@@ -1,0 +1,25 @@
+test
+bizroad
+dist
+
+.DS_Store
+
+node_modules
+
+
+# Emacs
+*~
+
+# Vim
+.swp
+
+# JetBrains Intellij
+.idea
+
+# VScode
+.vscode
+
+# lock
+package-lock.json
+yarn.lock
+tsconfig.tsbuildinfo

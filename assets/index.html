@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bizroad-analysis</title>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/4.15.1/antd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.0.2/echarts.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.15.1/antd.min.css" />
+    <style>
+      #app {
+        display: flex;
+        height: 100vh;
+      }
+      .site-layout-content {
+        min-height: 280px;
+        padding: 24px;
+        background: #fff;
+        flex: 1;
+        display: flex;
+        flex-flow: column nowrap;
+      }
+      #components-layout-demo-top .logo {
+        float: left;
+        width: 120px;
+        height: 31px;
+        margin: 16px 24px 16px 0;
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .ant-row-rtl #components-layout-demo-top .logo {
+        float: right;
+        margin: 16px 0 16px 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script>
+      const point = $$_data_$$;
+
+      let queue = [{ from: null, next: point }];
+      let links = [];
+      let nodes = [];
+      let existSet = new Set();
+
+      do {
+        const data = queue.shift();
+        if (!data.next) continue;
+        const from = data.from;
+        Object.entries(data.next).forEach(([k, v]) => {
+          if (from) {
+            links.push({
+              source: from,
+              target: k,
+              value: 1,
+            });
+          }
+          !existSet.has(k) &&
+            (existSet.add(k),
+            nodes.push({
+              name: k,
+            }));
+          queue.push({ from: k, next: v });
+        });
+      } while (queue.length);
+
+      window.links = links;
+      window.nodes = nodes;
+      window.existSet = existSet;
+    </script>
+    <script></script>
+    <script type="text/babel">
+      const { Fragment, useState, useCallback, useRef, useEffect, useMemo } = React;
+      const { Layout, Menu, Breadcrumb, Form, Select, Button } = antd;
+
+      const componentHitRender = key => {
+        let component = <Bizroad />;
+
+        switch (key) {
+          case 'sanKey': {
+            component = <Fragment></Fragment>;
+            break;
+          }
+          case 'search':
+          default:
+            component = <Bizroad />;
+        }
+
+        return component;
+      };
+
+      const pathHitRender = path => {
+        const nodes = new Set();
+        const links = window.links.filter(link => {
+          if (link.source === path || link.target === path) {
+            nodes.add(link.source);
+            nodes.add(link.target);
+            return true;
+          } else {
+            return false;
+          }
+        });
+
+        return {
+          nodes: Array.from(nodes).map(node => ({
+            name: node,
+          })),
+          links,
+        };
+      };
+
+      const Frame = () => {
+        const [renderComponent, setRenderComponent] = useState('search');
+
+        const handleMenuClick = useCallback(({ key }) => {
+          setRenderComponent(key);
+        }, []);
+
+        return (
+          <Layout className="layout">
+            <Layout.Header>
+              <div className="logo" />
+              <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['search']} onClick={handleMenuClick}>
+                <Menu.Item key="search">检索</Menu.Item>
+                <Menu.Item key="sanKey">展示图</Menu.Item>
+              </Menu>
+            </Layout.Header>
+            <Layout.Content style={{ padding: '20px 50px 0', display: 'flex', flexFlow: 'column nowrap' }}>
+              <div className="site-layout-content">{componentHitRender(renderComponent)}</div>
+            </Layout.Content>
+            <Layout.Footer style={{ textAlign: 'center' }}>create by charlesMoone</Layout.Footer>
+          </Layout>
+        );
+      };
+
+      const Bizroad = () => {
+        const [form] = Form.useForm();
+        const sanKeyRef = useRef();
+        const [option, setOption] = useState({});
+        const [chart, setChart] = useState(null);
+
+        useEffect(() => {
+          setChart(echarts.init(sanKeyRef.current));
+        }, []);
+
+        useEffect(() => {
+          chart && chart.setOption(option);
+        }, [option]);
+
+        const onFinish = useCallback(value => {
+          const { nodes, links } = pathHitRender(value.searchContent);
+
+          setOption({
+            tooltip: {
+              show: false,
+              trigger: 'item',
+              triggerOn: 'mousemove',
+            },
+            series: [
+              {
+                type: 'sankey',
+                animation: true,
+                data: nodes,
+                links: links,
+                label: {
+                  borderWidth: 120,
+                  overflow: 'breakAll',
+                },
+                focusNodeAdjacency: 'allEdges',
+                itemStyle: {
+                  borderWidth: 1,
+                  borderColor: '#aaa',
+                },
+                lineStyle: {
+                  color: 'source',
+                  curveness: 0.5,
+                },
+              },
+            ],
+          });
+        }, []);
+
+        return (
+          <Fragment>
+            <Form form={form} layout="inline" onFinish={onFinish}>
+              <Form.Item name="searchContent" rules={[{ required: true, message: '路径不能为空' }]} label="路径">
+                <Select showSearch allowClear placeholder="请选择一个路径" style={{ width: '288px' }}>
+                  {Array.from(existSet).map(listOption => (
+                    <Select.Option key={listOption}>{listOption}</Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item shouldUpdate>
+                {() => (
+                  <Button type="primary" htmlType="submit">
+                    查找
+                  </Button>
+                )}
+              </Form.Item>
+            </Form>
+
+            <Layout.Content style={{ flex: 1, marginTop: '20px' }}>
+              <div ref={sanKeyRef} style={{ height: '100%' }}></div>
+            </Layout.Content>
+          </Fragment>
+        );
+      };
+
+      ReactDOM.render(<Frame></Frame>, document.querySelector('#app'));
+    </script>
+  </body>
+</html>
