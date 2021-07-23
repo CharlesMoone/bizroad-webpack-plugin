@@ -18,14 +18,18 @@ const vueReadFile = (file: string) => {
 };
 
 export const readFile = (path: string, { specialSuffix }: IBizroadOptions) => {
-  let file = fs.readFileSync(path, { encoding: 'utf-8' });
+  try {
+    let file = fs.readFileSync(path, { encoding: 'utf-8' });
 
-  const suffix = path.split('.').reverse()[0];
-  if (specialSuffix.includes(`.${suffix}`)) {
-    if (suffix === 'vue') {
-      file = vueReadFile(file);
+    const suffix = path.split('.').reverse()[0];
+    if (specialSuffix.includes(`.${suffix}`)) {
+      if (suffix === 'vue') {
+        file = vueReadFile(file);
+      }
     }
-  }
 
-  return file;
+    return file;
+  } catch (err) {
+    return false;
+  }
 };

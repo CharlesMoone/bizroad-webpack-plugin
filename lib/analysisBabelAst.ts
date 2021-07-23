@@ -7,6 +7,7 @@ export default (babelAst: File | null) => {
   traverse(babelAst, {
     enter(path: any) {
       if (path.isImport()) {
+        // TODO: 这里向上解析看看能否解析出来 lazy.load 语法
         path.container.arguments[0].value && nodePathList.add(path.container.arguments[0].value);
       } else if (path.isImportDeclaration()) {
         path.node.source.value && nodePathList.add(path.node.source.value);

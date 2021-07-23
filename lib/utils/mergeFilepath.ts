@@ -6,14 +6,18 @@ import { fileCheck } from './fileCheck';
 import { IBizroadOptions } from '../types';
 
 export const findFile = (dir: string, target: string, extensions: string[]) => {
-  const dirFileList = fs.readdirSync(dir);
-  const suffix = target.split('.').reverse()[0];
-  if (extensions.includes(`.${suffix}`)) {
-    return dirFileList.find(file => target === file);
-  }
+  try {
+    const dirFileList = fs.readdirSync(dir);
+    const suffix = target.split('.').reverse()[0];
+    if (extensions.includes(`.${suffix}`)) {
+      return dirFileList.find(file => target === file);
+    }
 
-  const findFile = extensions.map(extension => `${target}${extension}`);
-  return dirFileList.find(file => findFile.includes(file));
+    const findFile = extensions.map(extension => `${target}${extension}`);
+    return dirFileList.find(file => findFile.includes(file));
+  } catch (err) {
+    return false;
+  }
 };
 
 export const mergeFilepath = (mergePath: string, filepath: string, { alias, extensions }: IBizroadOptions) => {

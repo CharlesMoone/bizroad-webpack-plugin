@@ -2,7 +2,7 @@
 
 | version name |            install package            | version |
 | :----------: | :-----------------------------------: | :-----: |
-|     prod     | npm install bizroad-webpack-plugin -D |  1.0.4  |
+|     prod     | npm install bizroad-webpack-plugin -D |  1.0.5  |
 
 ## notice
 
@@ -11,6 +11,7 @@ ensure your `node` version is `>10`, sorry about only support lts version node
 - [x] support `TS`, `TSX`, `JSX`, `JS`
 - [x] UI 1.0
 - [x] support search `path` and find `what import` and `import what`
+- [ ] support the TYPE of the `package` like `lazy load`
 - [ ] support find useless `package` from `package.json`
 - [ ] support find the `version` which in `package.json`, should be updated or dangerous
 

@@ -17,7 +17,7 @@ class BizroadWebpackPlugin {
     name: 'bizroad',
     outputPath: '',
     parsePlugins: ['jsx', 'dynamicImport', 'classProperties', 'typescript', 'decorators-legacy'],
-    extensions: ['.js', '.jsx', '.tx', '.tsx', '.mjs', '.vue'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.vue'],
     specialSuffix: ['.vue'],
     context: '',
   };
@@ -74,6 +74,9 @@ class BizroadWebpackPlugin {
 
     const mergePath = path.resolve(options.context, entryFilepath);
     const file = readFile(mergePath, options);
+
+    if (!file) return false;
+
     const ast = file2babelAst(file, options);
 
     const queue: queueType[] = [{ path: mergePath, ast, form: this.links }];
@@ -98,7 +101,10 @@ class BizroadWebpackPlugin {
 
         if (!status) return (_form[handlePath(_path, options)][handlePath(synthesisPath, options)] = {}), false;
 
-        const astItem = file2babelAst(readFile(synthesisPath, options), options);
+        const fileInfo = readFile(synthesisPath, options);
+        if (!fileInfo) return false;
+
+        const astItem = file2babelAst(fileInfo, options);
 
         queue.push({
           path: synthesisPath,
