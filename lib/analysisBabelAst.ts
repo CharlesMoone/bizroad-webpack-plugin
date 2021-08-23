@@ -18,6 +18,7 @@ export default (babelAst: File | null) => {
           path.container.arguments[0].value && nodePathList.add(path.container.arguments[0].value);
       }
     },
+    
   });
 
   return Array.from(nodePathList);
