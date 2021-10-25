@@ -106,8 +106,10 @@ class BizroadWebpackPlugin {
       nodePathList.forEach(filepath => {
         const { synthesisPath, status } = mergeFilepath(_path, filepath, options);
 
-        if (!status) this.packageSet.add(synthesisPath);
-        if (!status) return (_form[handlePath(_path, options)][handlePath(synthesisPath, options)] = {}), false;
+        if (!status) {
+          this.packageSet.add(synthesisPath);
+          return (_form[handlePath(_path, options)][handlePath(synthesisPath, options)] = {}), false;
+        }
 
         const fileInfo = readFile(synthesisPath, options);
         if (!fileInfo) return false;
@@ -121,8 +123,6 @@ class BizroadWebpackPlugin {
         });
       });
     } while (queue.length);
-
-    // console.log('filepathSet', filepathSet);
   }
 }
 
