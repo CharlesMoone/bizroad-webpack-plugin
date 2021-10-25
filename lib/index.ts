@@ -26,6 +26,11 @@ class BizroadWebpackPlugin {
 
   links: queueFormType;
 
+  /**
+   * 存储所有用到的 package
+   */
+  packageSet: Set<string>;
+
   constructor(options: IBizroadOptions) {
     this.options = {
       ...this.options,
@@ -35,6 +40,8 @@ class BizroadWebpackPlugin {
     this.entryFilesPath = [];
 
     this.links = {};
+
+    this.packageSet = new Set();
   }
 
   apply(compiler: Compiler) {
@@ -61,7 +68,7 @@ class BizroadWebpackPlugin {
 
       entryFilesPath.forEach(this._handleEntryFilesPath.bind(this));
 
-      writeFile(this.links, this.options);
+      writeFile(this.links, this.packageSet, this.options);
     });
   }
 
@@ -99,6 +106,7 @@ class BizroadWebpackPlugin {
       nodePathList.forEach(filepath => {
         const { synthesisPath, status } = mergeFilepath(_path, filepath, options);
 
+        if (!status) this.packageSet.add(synthesisPath);
         if (!status) return (_form[handlePath(_path, options)][handlePath(synthesisPath, options)] = {}), false;
 
         const fileInfo = readFile(synthesisPath, options);
@@ -113,6 +121,8 @@ class BizroadWebpackPlugin {
         });
       });
     } while (queue.length);
+
+    // console.log('filepathSet', filepathSet);
   }
 }
 

@@ -1,0 +1,15 @@
+{
+  "name": "bizroad-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "clear": "rm -rf server",
+    "build": "tsc",
+    "server": "yarn clear && yarn build && node server/main.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  }
+}
