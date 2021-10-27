@@ -50,10 +50,10 @@ const MenuLayout: NextPage<Props> = ({ children }) => {
           onClick={handleActiveKey}
         >
           <Menu.Item key="stream">
-            <Link href="/stream">检索</Link>
+            <Link href="/stream">File Stream</Link>
           </Menu.Item>
           <Menu.Item key="package">
-            <Link href="/package">展示图</Link>
+            <Link href="/package">Package Search</Link>
           </Menu.Item>
         </Menu>
       </Layout.Header>
