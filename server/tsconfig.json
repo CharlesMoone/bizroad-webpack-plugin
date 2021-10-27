@@ -4,10 +4,10 @@
     "lib": ["ESNext"],
     "rootDir": "lib",
     "esModuleInterop": true,
-    "outDir": "server",
+    "outDir": "dist",
     "moduleResolution": "node",
     "sourceMap": true,
     "declaration": true
   },
-  "exclude": ["node_modules", "server"]
+  "exclude": ["node_modules", "dist"]
 }

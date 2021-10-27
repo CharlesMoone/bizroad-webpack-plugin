@@ -8,5 +8,5 @@
     "sourceMap": true,
     "declaration": true
   },
-  "exclude": ["node_modules", "build", "demo", "dist", "assets"]
+  "exclude": ["node_modules", "build", "demo", "dist", "render", "server", "bizroad_system"]
 }
