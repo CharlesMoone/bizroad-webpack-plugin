@@ -70,7 +70,7 @@ npm run test
 # open bizroad/index.html
 ```
 
-then open your browser: [http://localhost:1208](http://localhost:1208)
+then open `bizroad/index.html` file
 
 A sankey of your project's business load will show
 
