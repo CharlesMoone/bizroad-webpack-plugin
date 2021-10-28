@@ -16,12 +16,12 @@ import * as echarts from 'echarts';
 import MenuLayout from '../../components/MenuLayout';
 
 type TStreamQueueNext = {
-  [key in string]: string | TStreamQueueNext;
+  [key in string]: TStreamQueueNext;
 };
 
 type TStreamQueue = {
   from: string | null;
-  next: string | TStreamQueueNext;
+  next: TStreamQueueNext;
 };
 
 type TStreamLink = {
@@ -41,7 +41,13 @@ type TFormCollectionValue = {
 };
 
 const handleStreamData = async () => {
-  const { stream: point }: { stream: TStreamQueueNext } = await (await fetch('/api/stream/getAllFileStream')).json();
+  const { stream: point }: { stream: string | TStreamQueueNext } = await (
+    await fetch('/api/stream/getAllFileStream')
+  ).json();
+
+  if (typeof point === 'string') {
+    return { links: [], nodes: [], existSet: new Set<string>() };
+  }
 
   let queue: TStreamQueue[] = [{ from: null, next: point }];
   let links: TStreamLink[] = [];

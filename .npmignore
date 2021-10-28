@@ -3,8 +3,8 @@ bizroad
 ./assets
 
 demo
-
 lib
+bizroad_system
 
 tsconfig.json
 

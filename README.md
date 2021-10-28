@@ -14,7 +14,7 @@ ensure your `node` version is `>10`, sorry about only support lts version node
 - [x] support click the `path` to search
 - [ ] support the TYPE of the `package` like `lazy load`
 - [ ] support find useless `package` from `package.json`
-- [ ] support find the `version` which in `package.json`, should be updated or dangerous
+- [x] support find the `version` which in `package.json`, should be updated or dangerous
 
 ## install
 
@@ -65,21 +65,17 @@ export default {
 ## For Test
 
 ```bash
-npm install
-npm run test
-# open bizroad/index.html
+yarn
+yarn test
+
+yarn add next -g
+cd ./bizroad && next start
 ```
 
-then open `bizroad/index.html` file
+then open [http://localhost:3000/](http://localhost:3000/)
 
 A sankey of your project's business load will show
 
 ## Author
 
 charlesmoone, meng5994197@gmail.com
-
-## Contributors
-
-welcome new Github guy ～ 🎉🎉🎉
-
-**jijiaxin1808**
