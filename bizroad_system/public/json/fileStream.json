@@ -1,0 +1,30 @@
+{
+  "/demo/src/main.js": {
+    "/demo/src/utils/request.js": {
+      "axios": {}
+    },
+    "/demo/src/lib/index.js": {
+      "/demo/src/lib/classes/HandleTest.js": {
+        "/demo/src/utils/request.js": {}
+      }
+    }
+  },
+  "/demo/vuesrc/index.vue": {
+    "axios": {},
+    "/demo/vuesrc/module.vue": {},
+    "/demo/vuesrc/yello.js": {}
+  },
+  "/demo/jsxsrc/main.jsx": {
+    "react": {},
+    "react-dom": {},
+    "/demo/jsxsrc/utils.js": {},
+    "/demo/jsxsrc/Hello.jsx": {
+      "react": {}
+    }
+  },
+  "/demo/tsxsrc/main.tsx": {
+    "/demo/tsxsrc/Hello.tsx": {
+      "react": {}
+    }
+  }
+}
