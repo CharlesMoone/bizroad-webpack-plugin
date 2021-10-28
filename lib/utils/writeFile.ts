@@ -3,11 +3,18 @@ import path from 'path';
 
 import { IBizroadOptions, queueFormType } from '../types';
 
-/**
- * 写入 bizroad.json
- */
-const writeBizroadJSON = (dir: string, name: string, links: queueFormType): void => {
-  fs.writeFileSync(path.resolve(dir, `${name}.json`), JSON.stringify(links, null, 2), {
+const copyNextLocalServer = (dir: string, name: string, links: queueFormType) => {
+  fs.cpSync(path.resolve(__dirname, '../.next'), path.resolve(dir, './.next'), {
+    recursive: true,
+  });
+
+  const getAllFileStreamFile = fs
+    .readFileSync(path.resolve(__dirname, '../.next/server/pages/api/stream/getAllFileStream.js'), {
+      encoding: 'utf-8',
+    })
+    .replace(/\`\$\$__TEMP__STREAM__\$\$\`/, JSON.stringify(links));
+
+  fs.writeFileSync(path.resolve(dir, './.next/server/pages/api/stream/getAllFileStream.js'), getAllFileStreamFile, {
     encoding: 'utf-8',
   });
 };
@@ -15,30 +22,11 @@ const writeBizroadJSON = (dir: string, name: string, links: queueFormType): void
 const writePackageJSON = (dir: string, name: string, packageSet: Set<string>) => {
   fs.writeFileSync(
     path.resolve(dir, `${name}.package.json`),
-    JSON.stringify(Object.fromEntries(Array.from(packageSet).map(i => [i, null])), null, 2),
+    JSON.stringify(Object.fromEntries(Array.from(packageSet).map((i) => [i, null])), null, 2),
     {
       encoding: 'utf-8',
     },
   );
-};
-
-const copyHtmlFromAssets = (links: queueFormType): string => {
-  return fs
-    .readFileSync(path.resolve(__dirname, '../assets/index.html'), {
-      encoding: 'utf-8',
-    })
-    .replace(/\$\$_data_\$\$/, JSON.stringify(links));
-};
-
-const writeBizroadHTML = (dir: string, links: queueFormType) => {
-  const html = copyHtmlFromAssets(links);
-
-  /**
-   * 写入代码到 html 里
-   */
-  fs.writeFileSync(`${dir}/index.html`, html, {
-    encoding: 'utf-8',
-  });
 };
 
 export const writeFile = (
@@ -55,9 +43,7 @@ export const writeFile = (
     });
   }
 
-  writeBizroadJSON(dir, name, links);
+  copyNextLocalServer(dir, name, links);
 
   writePackageJSON(dir, name, packageSet);
-
-  writeBizroadHTML(dir, links);
 };

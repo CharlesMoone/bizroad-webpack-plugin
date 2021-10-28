@@ -41,7 +41,7 @@ type TFormCollectionValue = {
 };
 
 const handleStreamData = async () => {
-  const point = (await import('../../public/json/fileStream.json')).default;
+  const { stream: point }: { stream: TStreamQueueNext } = await (await fetch('/api/stream/getAllFileStream')).json();
 
   let queue: TStreamQueue[] = [{ from: null, next: point }];
   let links: TStreamLink[] = [];
@@ -69,7 +69,7 @@ const handleStreamData = async () => {
 
 const pathHitRender = (links: TStreamLink[], path: string) => {
   const nodes = new Set<string | number>();
-  const filterLinks = links.filter(link => {
+  const filterLinks = links.filter((link) => {
     if (link.source === path || link.target === path) {
       nodes.add(link.source);
       nodes.add(link.target);
@@ -80,7 +80,7 @@ const pathHitRender = (links: TStreamLink[], path: string) => {
   });
 
   return {
-    nodes: Array.from(nodes).map(node => ({ name: node })),
+    nodes: Array.from(nodes).map((node) => ({ name: node })),
     filterLinks,
   };
 };
@@ -161,9 +161,13 @@ const StreamFile: NextPage<{}> = () => {
   return (
     <MenuLayout>
       <Form form={form} layout="inline" onFinish={onFinish}>
-        <Form.Item name="searchContent" rules={[{ required: true, message: 'the PATH can not be EMPTY!' }]} label="Path">
+        <Form.Item
+          name="searchContent"
+          rules={[{ required: true, message: 'the PATH can not be EMPTY!' }]}
+          label="Path"
+        >
           <Select showSearch allowClear placeholder="please choose a path" style={{ width: '488px' }}>
-            {Array.from(existSet).map(listOption => (
+            {Array.from(existSet).map((listOption) => (
               <Select.Option key={listOption} value={listOption}>
                 {listOption}
               </Select.Option>

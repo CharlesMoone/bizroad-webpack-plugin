@@ -14,7 +14,7 @@
     "beta": "npm run clear && npm run compile && npm pu --tag beta",
     "prepack": "npm run clear && npm run compile",
     "compile": "tsc && npm run assets",
-    "assets": "cp -r ./assets ./dist",
+    "assets": "cp -r ./assets ./dist && cp -r ./bizroad_system/.next ./dist",
     "test": "npm run compile && webpack --config ./demo/webpack.config.js"
   },
   "keywords": [
