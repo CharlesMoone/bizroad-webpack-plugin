@@ -35,13 +35,13 @@ const PackageHandle: NextPage<{}> = () => {
 
   return (
     <MenuLayout>
-      <Form name="Package" labelCol={{ span: 4 }} autoComplete="off" onFinish={onFinish}>
+      <Form name="Package" layout="inline" autoComplete="off" onFinish={onFinish}>
         <Form.Item label="Package Name" name="packageName">
           <Input />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            submit
+            Search
           </Button>
         </Form.Item>
       </Form>

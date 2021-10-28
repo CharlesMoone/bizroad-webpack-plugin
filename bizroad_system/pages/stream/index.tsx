@@ -161,8 +161,8 @@ const StreamFile: NextPage<{}> = () => {
   return (
     <MenuLayout>
       <Form form={form} layout="inline" onFinish={onFinish}>
-        <Form.Item name="searchContent" rules={[{ required: true, message: '路径不能为空' }]} label="路径">
-          <Select showSearch allowClear placeholder="请选择一个路径" style={{ width: '488px' }}>
+        <Form.Item name="searchContent" rules={[{ required: true, message: 'the PATH can not be EMPTY!' }]} label="Path">
+          <Select showSearch allowClear placeholder="please choose a path" style={{ width: '488px' }}>
             {Array.from(existSet).map(listOption => (
               <Select.Option key={listOption} value={listOption}>
                 {listOption}
@@ -173,7 +173,7 @@ const StreamFile: NextPage<{}> = () => {
         <Form.Item shouldUpdate>
           {() => (
             <Button type="primary" htmlType="submit">
-              查找
+              Search
             </Button>
           )}
         </Form.Item>
