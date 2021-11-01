@@ -1,6 +1,6 @@
 {
   "name": "bizroad-webpack-plugin",
-  "version": "1.0.6",
+  "version": "1.1.0-beta.0",
   "description": "webpack plugin for biz road",
   "main": "dist/index.js",
   "files": [
@@ -8,13 +8,13 @@
   ],
   "types": "dist/index.d.ts",
   "scripts": {
-    "server": "nodemon --experimental-modules --experimental-json-modules ./server/app.mjs",
+    "dev": "cd bizroad_system && yarn dev",
     "clear": "rm -rf ./bizroad ./demo/dist ./dist",
     "pretest": "npm run clear",
     "beta": "npm run clear && npm run compile && npm pu --tag beta",
     "prepack": "npm run clear && npm run compile",
-    "compile": "tsc && npm run assets",
-    "assets": "cp -r ./assets ./dist && cp -r ./bizroad_system/.next ./dist",
+    "compile": "tsc && npm run nextServer",
+    "nextServer": "cd bizroad_system && yarn build && cd - && cp -r ./bizroad_system/.next ./dist",
     "test": "npm run compile && webpack --config ./demo/webpack.config.js"
   },
   "keywords": [

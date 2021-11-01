@@ -2,6 +2,7 @@
  * types
  */
 import { NextPage } from 'next';
+import { SetStateAction } from 'react';
 import { SankeySeriesOption } from 'echarts/charts';
 import { TooltipComponentOption } from 'echarts/components';
 
@@ -31,7 +32,7 @@ type TStreamLink = {
 };
 
 type TStreamNode = {
-  name: string;
+  name: string | number;
 };
 
 type ECOption = echarts.ComposeOption<TooltipComponentOption | SankeySeriesOption>;
@@ -73,10 +74,10 @@ const handleStreamData = async () => {
   return { links, nodes, existSet };
 };
 
-const pathHitRender = (links: TStreamLink[], path: string) => {
+const pathHitRender = (links: TStreamLink[], path: string[]) => {
   const nodes = new Set<string | number>();
   const filterLinks = links.filter((link) => {
-    if (link.source === path || link.target === path) {
+    if (path.includes(link.source.toString()) || path.includes(link.target.toString())) {
       nodes.add(link.source);
       nodes.add(link.target);
       return true;
@@ -86,8 +87,41 @@ const pathHitRender = (links: TStreamLink[], path: string) => {
   });
 
   return {
-    nodes: Array.from(nodes).map((node) => ({ name: node })),
-    filterLinks,
+    nodes: Array.from(nodes).map<TStreamNode>((node) => ({ name: node })),
+    links: filterLinks,
+  };
+};
+
+const updateStreamOptions = (links: TStreamLink[], nodes: TStreamNode[]): SetStateAction<ECOption> => {
+  return {
+    tooltip: {
+      show: false,
+      trigger: 'item',
+      triggerOn: 'mousemove',
+    },
+    series: [
+      {
+        type: 'sankey',
+        animation: true,
+        data: nodes,
+        links: links,
+        label: {
+          borderWidth: 120,
+          overflow: 'breakAll',
+        },
+        emphasis: {
+          focus: 'adjacency',
+        },
+        itemStyle: {
+          borderWidth: 1,
+          borderColor: '#aaa',
+        },
+        lineStyle: {
+          color: 'source',
+          curveness: 0.5,
+        },
+      },
+    ],
   };
 };
 
@@ -97,69 +131,59 @@ const StreamFile: NextPage<{}> = () => {
   const [option, setOption] = useState<ECOption>({});
   const [links, setLinks] = useState<TStreamLink[]>([]);
   const [nodes, setNodes] = useState<TStreamNode[]>([]);
+  const [selectFileNames, setSelectFileNames] = useState<string[]>([]);
   const [existSet, setExistSet] = useState<Set<string>>(new Set());
   const [chart, setChart] = useState<echarts.ECharts>();
 
   const handleDidMount = async () => {
-    const { links, nodes, existSet } = await handleStreamData();
-    setLinks(links);
-    setNodes(nodes);
-    setExistSet(existSet);
+    const { links: _links, nodes: _nodes, existSet: _existSet } = await handleStreamData();
+    setLinks(_links);
+    setNodes(_nodes);
+    setExistSet(_existSet);
 
-    if (sanKeyRef.current && !chart) {
-      const _chart = echarts.init(sanKeyRef.current);
-      setChart(_chart);
-      _chart.on('click', ({ name }) => {
-        form.setFieldsValue({ searchContent: name });
-        form.submit();
-      });
-    }
+    sanKeyRef.current && setChart(echarts.init(sanKeyRef.current));
   };
 
   useEffect(() => {
     handleDidMount();
   }, []);
 
+  const handleChartClick = useCallback(
+    ({ name }: { name: string }) => {
+      const mergeSelectFileNameSet = new Set(selectFileNames);
+      mergeSelectFileNameSet.add(name);
+      const mergeSelectFileName = Array.from(mergeSelectFileNameSet);
+
+      if (selectFileNames.length === mergeSelectFileNameSet.size) {
+        return;
+      }
+
+      const { nodes: _nodes, links: _links } = pathHitRender(links, mergeSelectFileName);
+      setSelectFileNames(mergeSelectFileName);
+      setOption(updateStreamOptions(_links, _nodes));
+    },
+    [links, selectFileNames],
+  );
+
+  useEffect(() => {
+    chart?.on('click', handleChartClick);
+    return () => {
+      chart?.off('click', handleChartClick);
+    };
+  }, [handleChartClick]);
+
   useEffect(() => {
     if (chart) {
       chart.setOption(option);
     }
-  }, [chart, option]);
+  }, [option]);
 
   const onFinish = useCallback(
     (value: TFormCollectionValue) => {
-      const { nodes, filterLinks } = pathHitRender(links, value.searchContent);
+      const { nodes: _nodes, links: _links } = pathHitRender(links, [value.searchContent]);
+      setSelectFileNames([value.searchContent]);
 
-      setOption({
-        tooltip: {
-          show: false,
-          trigger: 'item',
-          triggerOn: 'mousemove',
-        },
-        series: [
-          {
-            type: 'sankey',
-            animation: true,
-            data: nodes,
-            links: filterLinks,
-            label: {
-              borderWidth: 120,
-              overflow: 'breakAll',
-            },
-            emphasis: {
-              focus: 'adjacency',
-            },
-            itemStyle: {
-              borderWidth: 1,
-              borderColor: '#aaa',
-            },
-            lineStyle: {
-              color: 'source',
-              curveness: 0.5,
-            },
-          },
-        ],
-      });
+      setOption(updateStreamOptions(_links, _nodes));
     },
     [links],
   );
